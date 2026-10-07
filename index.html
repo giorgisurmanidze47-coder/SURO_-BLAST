@@ -1528,7 +1528,42 @@
       if (gameMode === 'bomb') startTimer();
     }
 
-    function watchAdAndRevive() {
+function watchAdAndRevive() {
+    if (reviveLeft <= 0 || isWatchingAd) return;
+    playSound('button');
+
+    const adModal = document.getElementById('adModal');
+    const adFrame = document.getElementById('adFrame');
+    
+    if (adModal && adFrame) {
+        adFrame.src = 'https://uplcm.com/4/11956206';
+        adModal.style.display = 'flex';
+    }
+
+    isWatchingAd = true;
+    reviveBtn.disabled = true;
+    
+    let adTime = 5;
+    reviveBtn.textContent = `⌛ Watching Ad... (${adTime}s)`;
+    
+    const adInterval = setInterval(() => {
+        adTime--;
+        if (adTime > 0) {
+            reviveBtn.textContent = `⌛ Watching Ad... (${adTime}s)`;
+        } else {
+            clearInterval(adInterval);
+            closeAdModal();
+            revivePlayer();
+        }
+    }, 1000);
+}
+
+function closeAdModal() {
+    const adModal = document.getElementById('adModal');
+    const adFrame = document.getElementById('adFrame');
+    if (adModal) adModal.style.display = 'none';
+    if (adFrame) adFrame.src = '';
+}
       if (reviveLeft <= 0 || isWatchingAd) return;
       playSound('button');
     window.open('https://uplcm.com/4/11956206', '_blank');
@@ -2073,5 +2108,12 @@
 
     createBoard();
   </script>
+   <!-- სარეკლამო ფანჯარა (Modal) -->
+<div id="adModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; align-items:center; justify-content:center;">
+    <div style="position:relative; width:90%; max-width:500px; height:400px; background:#fff; border-radius:12px; overflow:hidden;">
+        <button onclick="closeAdModal()" style="position:absolute; top:8px; right:12px; background:#ff4757; color:#fff; border:none; border-radius:50%; width:32px; height:32px; font-weight:bold; cursor:pointer; z-index:10000;">✕</button>
+        <iframe id="adFrame" style="width:100%; height:100%; border:none;"></iframe>
+    </div>
+</div>
 </body>
 </html>
